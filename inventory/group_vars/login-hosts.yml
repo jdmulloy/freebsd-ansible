@@ -1,0 +1,11 @@
+---
+users:
+  - username: jdmulloy
+    name: Joseph Mulloy
+    password: "{{ users_jdmulloy_password_hash }}"
+    groups: ['wheel']
+    uid : 1000
+    ssh_key: &users_jdmulloy_ssh_keys
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDqrfOLh+SkhsCrM1OOep+TOp4fMyhUKnrNpiSDclruCFifO3p+wvQfDxgX+JaeAY8A4ZwOeFjQ+U6cqVFtGunEe7cuZJC5dCPRyhVXmyvuh8OzbV1sWmjLZxAhY9rbW1Ng/XTGOMYf+4lg3xrlkIRlyXhlaUiC841O96c+5zO9WCSgpOmtQ2DV07E03PxvHRDUIxWBPGtx0Zilflnoiq0TQRxiFf40/or1kBl6U5TiIKVi7Px5m7UD3STLawCK1plPHxvXFlHc3Jj7pfkrmnbvIV94LCcc0aM+cmmRTtjOg82OXEaa43K1CUSIWnVP93CM0y/KtBNbj6oxzytiKLsD jdmulloy@silicon.jdmulloy.net"
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6KRXV3gTlci8CnRFiSNojTnSeFUl5LdCRw04dMZLhjmkwM/Cd03BlD07TfJKHCi5T+geKTT3q/y84TQimgM8ZV23VV+XFNrIsKI6sePKJR0go2+iGE9zrfJbv5AXAs6hAGKIBPwxnaH8pWoxodat+wgQU5N2eAGINrCs2/nb8c+znQsHjs1nu13vCK4KCGKyY+wRa2jIk4FmvTU8C14dm+89F7ZhywHIwmh7KGM2W2fhk61AxfZreuuDD9e6YgzWTn4s2UH3zAn3NSgROL5slOhZ6clQO79Tl+51s59MudU0KtEWkxB4Xqjafszo843edgTTvPdiw880N9dHR/4Tx jdmulloy@aluminium.jdmulloy.net"
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDsnG+YzcZTGqEqM3v4Zrq/ZxXrxSnHRmOffDEFXdjVAh971DObv+yFQztMuOmcPkxpd3I6t5KG+fjW6SepfmH3hjdXrwnJ1DyaZClj7+JJ3mlh3n0Cb64Th8bhqyAsKShgYaz7DXtee5ewQRZXs16kM5WTTAMqEsvFqCT3XslTbYQiYqW3OTRIlbS9lF2Xvb2zFDYjIJj3oOZpQTfsOf9FDd6uAXta7PxgY4mu3g1KyQ4M3TkesvIEh+NvGrFnCay1lN51htbeFd2rYKjjI76xDzx61upk0Ym7JtirL1jzhg8rWETH/e27oxbSXKKoB7U2xyhz/py+ADXSncou1zOn jdmulloy@server1.jdmulloy.net"
