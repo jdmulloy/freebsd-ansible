@@ -1,7 +1,4 @@
 ---
-- debug:
-    msg: "Users {{users}}"  
-
 - name: Creating groups
   group: name="{{item.name}}" gid="{{item.gid | default(omit)}}"
   with_items: "{{groups_to_create}}"
