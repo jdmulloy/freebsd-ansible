@@ -1,0 +1,4 @@
+---
+- hosts: vps-test.jdmulloy.net
+  roles:
+    - singleplatform-eng-ansible-users
