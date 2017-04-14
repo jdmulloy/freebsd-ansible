@@ -1,4 +1,10 @@
 ---
+- hosts: all
+  become: yes
+  become_method: doas
+  user: ansible
+  roles:
+    - default
 - hosts: vps-test.jdmulloy.net
   roles:
     - singleplatform-eng-ansible-users

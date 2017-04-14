@@ -1,0 +1,7 @@
+---
+- package:
+    name: doas
+    state: present
+- template:
+    src: doas.conf.j2
+    dest: /usr/local/etc/doas.conf
