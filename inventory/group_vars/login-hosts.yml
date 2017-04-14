@@ -1,4 +1,5 @@
 ---
+users_default_shell: /bin/tcsh
 users:
   - username: jdmulloy
     name: Joseph Mulloy
