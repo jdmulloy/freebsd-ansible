@@ -1,6 +1,11 @@
 ---
 users_default_shell: /bin/tcsh
 users:
+  - username: ansible
+    name: Ansible
+    uid: 2000
+    ssh_key:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJAC5lPvkAfXijhIjh/ZDUAN3F2xvqBCFz0f/UBGipjl0FgJ6pIul87CK5px98moCV8clj/YXrCwgIQzpwbUqbD4YsFX2N9B3Vbxf8XC6I91aYw6crmm7IdYQ+rGFWCe0Xp053iHINZ32QAyWARtA6oNUL6xxnl13mjFRbWgNo3kfoGBAl/KrKGqT23GsDK+U0WNISIsB3iUa9/tOR+yYEaf7xQmvU4baOCQs50XgfuhjPU6DIjo7XwQ0CD5/WaR6eBm2ICjTrfUrIevIo2KNL1SyC6d1Emf9xCnASOu4vHBQ/QJ/LSDsX1honV9KgViCClSeqWmTQwilWwvnv9YRv root@server1.jdmulloy.net"
   - username: jdmulloy
     name: Joseph Mulloy
     password: "{{ users_jdmulloy_password_hash }}"
