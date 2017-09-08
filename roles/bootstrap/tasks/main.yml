@@ -1,0 +1,24 @@
+---
+- name: Make pkg directories
+  raw: mkdir -p /usr/local/etc/pkg/repos /usr/local/etc/ssl/keys
+
+- name: pwd
+  local_action: command pwd
+
+- name: Copy pkg conf
+  local_action: command scp ./roles/bootstrap/files/{{ item }} {{ inventory_hostname }}:/usr/local/etc/pkg/repos
+  with_items:
+    - FreeBSD.conf
+    - pkg.jdmulloy.net.conf
+
+- name: Copy CA root certificate
+  local_action: command scp ./roles/bootstrap/files/cert.pem {{ inventory_hostname }}:/usr/local/etc/ssl/cert.pem
+
+- name: Copy pkg repo pub key
+  local_action: command scp ./roles/bootstrap/files/pkg.jdmulloy.net.pub {{ inventory_hostname }}:/usr/local/etc/ssl/keys/pkg.jdmulloy.net.pub
+
+- name: Bootstrap pkg
+  raw: sh -c "export ASSUME_ALWAYS_YES=YES; pkg bootstrap"
+
+- name: Install python
+  raw: sh -c "export ASSUME_ALWAYS_YES=YES; pkg install python27"
