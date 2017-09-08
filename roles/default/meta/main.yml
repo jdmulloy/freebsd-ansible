@@ -1,3 +1,4 @@
 ---
 dependencies:
+  - { role: singleplatform-eng-ansible-users }
   - { role: doas }
