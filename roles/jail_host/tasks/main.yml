@@ -1,0 +1,73 @@
+---
+# TODO: create {{ jail_host_jails_dir }}/base if {{ jail_host_jails_dir }}/ mounted
+# unarchive doesn't work with bsdtar
+#- unarchive:
+#    src: "{{ freebsd_base_url }}"
+#    dest: {{ jail_host_jails_dir }}/base
+#    remote_src: True
+
+- name: Enable jail NAT
+  when: jail_host_enable_nat
+  block:
+    - name: Clone jail interface config file
+      template:
+        src: rc.conf.d/network
+        dest: "/etc/rc.conf.d/network"
+      register: rc_conf_d_network
+    - name: Clone jail interface
+      command: "/etc/rc.d/netif cloneup {{ jail_host_ip4_interface }}"
+      when: rc_conf_d_network.changed
+    - name: Enable gateway in /etc/rc.conf.d/routing
+      template:
+        src: rc.conf.d/routing
+        dest: "/etc/rc.conf.d/routing"
+      register: rc_conf_d_routing
+    - name: Restart routing to enable gateway
+      service:
+        name: routing
+        state: restarted
+      when: rc_conf_d_routing.changed
+
+- name: Mount jails directory
+  mount:
+    state: mounted
+    src: "{{ jail_host_dev }}"
+    path: "{{ jail_host_jails_dir }}"
+    fstype: "{{ jail_host_fstype }}"
+    opts: "rw,noauto"
+  register: jails_mounted
+
+- name: Download base.txz
+  get_url:
+    url: "{{ jail_host_freebsd_base_url }}"
+    dest: "{{ jail_host_jails_dir }}/base.txz"
+
+- name: Create jail directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ jail_host_jails_dir }}/template/"
+
+# Run tar manually because ansible unarchive doesn't support bsdtar
+- name: Extract base.txz
+  command: tar xvf "{{ jail_host_jails_dir }}/base.txz"
+  args:
+    chdir: "{{ jail_host_jails_dir }}/template"
+    creates: "{{ jail_host_jails_dir }}/template/*"
+
+- name: Install jail template rc.conf
+  copy:
+    src: rc.conf
+    dest: "{{ jail_host_jails_dir }}/template/etc/"
+
+- name: Create jails
+  with_items: "{{ jail_host_jails }}"
+  command: cp -a "{{ jail_host_jails_dir }}/template" "{{ jail_host_jails_dir }}/{{ item.name }}"
+  args:
+    creates: "{{ jail_host_jails_dir }}/{{ item.name }}"
+
+- name: Create jail.conf
+  template:
+    src: jail.conf.j2
+    dest: "/etc/jail.conf"

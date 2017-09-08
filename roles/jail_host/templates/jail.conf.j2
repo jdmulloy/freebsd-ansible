@@ -1,0 +1,27 @@
+{% for item in jail_host_jails %}
+
+{{ item.name }} {
+        host.hostname = "{{ item.hostname }}";
+        path = "{{ jail_host_jails_dir }}/$name";
+        ip4.addr += "{{ item.ip4_addr }}";
+{% if "ip6_addr" in item %}
+        ip6.addr += "{{ item.ip6_addr }}";
+{% endif %}
+        exec.start += "sleep  2 ";
+        allow.raw_sockets = {{ item.allow_raw_sockets | default("0") }};
+        exec.clean;
+        exec.system_user = "root";
+        exec.jail_user = "root";
+        exec.start += "/bin/sh /etc/rc";
+        exec.stop = "/bin/sh /etc/rc.shutdown";
+        exec.consolelog = "/var/log/jail_${name}_console.log";
+#        mount.fstab = "/etc/fstab.$name";
+{% if not(item.mount_devfs | default(false)) %}#{% endif %}        mount.devfs;
+{% if not(item.mount_fdescfs | default(false)) %}#{% endif %}        mount.fdescfs;
+{% if not(item.mount_procfs | default(false)) %}#{% endif %}        mount.procfs;
+        allow.set_hostname = 0;
+        sysvmsg=new;
+        sysvsem=new;
+        sysvshm=new;
+}
+{% endfor %}

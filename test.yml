@@ -5,6 +5,6 @@
   user: ansible
   roles:
     - default
-- hosts: vps-test.jdmulloy.net
+- hosts: vps-hosts
   roles:
-    - singleplatform-eng-ansible-users
+    - jail_host
