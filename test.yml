@@ -8,3 +8,4 @@
 - hosts: vps-hosts
   roles:
     - jail_host
+    - pf
