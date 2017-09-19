@@ -19,3 +19,17 @@ jail_host_jails:
     hostname: nagios.{{ ansible_fqdn }}
     ip4_addr: "{{ jail_host_ip4_interface}}|192.168.1.6"
     allow_raw_sockets: 1
+pf_in_tcp_services_common: ssh
+pf_in_udp_services_common: $mosh
+pf_location: vps
+
+pf_host_interface: vtnet0
+pf_out_from: $host_interface
+pf_in_to: $host_interface:0
+pf_nat_main_ip4: $host_interface:0
+
+pf_jail_lo_interface: "{{ jail_host_ip4_interface }}"
+# TODO: Enable when on ipv6 capable host
+#pf_enable_ipv6: true
+pf_ips_jails:
+  - 192.168.1.0/24
