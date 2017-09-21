@@ -67,6 +67,12 @@
   args:
     creates: "{{ JAILS_DIR }}/{{ item.name }}"
 
+- name: Copy resolv.conf to jail(s)
+  with_items: "{{ jail_host_jails }}"
+  copy:
+    src: /etc/resolv.conf
+    dest: "{{ JAILS_DIR }}/{{ item.name }}/etc/"
+
 - name: Create jail.conf
   template:
     src: jail.conf.j2
