@@ -1,0 +1,26 @@
+---
+- name: Create pf.conf.new
+  template:
+    src: pf.conf.j2
+    dest: "/etc/pf.conf.new"
+- name: Create pf.conf
+  template:
+    src: pf.conf.j2
+    dest: "/etc/pf.conf"
+    validate: "/sbin/pfctl -nf %s"
+  register: pf_conf
+- name: pflog service
+  service:
+    name: pflog
+    state: started
+    enabled: true
+- name: reload pf service
+  service:
+    name: pf
+    state: reloaded
+  when: pf_conf.changed
+- name: pf service
+  service:
+    name: pf
+    state: started
+    enabled: true

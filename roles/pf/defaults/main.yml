@@ -1,0 +1,77 @@
+---
+pf_out_tcp_services_common:
+pf_out_tcp_services:
+pf_out_tcp_services_jails:
+pf_out_tcp_services_vms:
+pf_out_udp_services_common:
+pf_out_udp_services:
+pf_out_udp_services_jails:
+pf_out_udp_services_vms:
+pf_in_tcp_services_common:
+pf_in_tcp_services:
+pf_in_tcp_services_vms:
+pf_in_udp_services_common:
+pf_in_udp_services:
+pf_in_udp_services_vms:
+
+pf_out_from_ip6: false
+pf_nat_main_ip4: false
+pf_nat_main_ip6: false
+
+pf_jail_lo_interface: false
+pf_openvpn_interface: false
+
+pf_ip_float: false
+pf_ipv6_float_prefix: false
+pf_ips_internal: []
+pf_ips_home: []
+pf_ips_vps: []
+pf_ips_vps_ns: []
+pf_ips_dns_resolv: []
+pf_ips_dns: []
+pf_ips_ups: []
+pf_ips_jails: []
+pf_ips_bgp: []
+pf_ips_mail: []
+pf_ips_sh: []
+pf_ips_puppet: []
+pf_ips_openvpn_server: []
+pf_ips_nextcloud: []
+pf_ips_nextcloud_ingress: []
+pf_ips_pkg: []
+pf_ips_backup: []
+pf_ips_elk: []
+pf_ips_web: []
+pf_ips_acme: []
+pf_ips_printserver: []
+pf_ips_pritunl_mongodb: []
+pf_ips_zxfer: []
+pf_ips_pritunl: []
+pf_ips_pritunl_clients: []
+pf_ips_zabbix: []
+pf_ips_openvpn_subnet: []
+
+pf_bhyve_host: false
+
+pf_enable_ipv6: false
+pf_enable_nextcloud_server: false
+pf_enable_dns_servers: false
+pf_enable_mail_server: false
+pf_enable_web_server: false
+pf_enable_nagios_server: false
+pf_enable_zabbix_server: false
+pf_enable_puppet_server: false
+pf_enable_pkg_server: false
+pf_enable_backup_server: false
+pf_enable_openvpn_server: false
+pf_enable_sh_server: false
+pf_enable_print_server: false
+pf_enable_zxfer_server: false
+pf_enable_elk_server: false
+pf_enable_ups: false
+pf_enable_bgp: false
+pf_enable_acme_client: false
+pf_enable_pritunl_mongodb_server: false
+pf_enable_pritunl_server: false
+
+pf_local_subnet_prefix: false

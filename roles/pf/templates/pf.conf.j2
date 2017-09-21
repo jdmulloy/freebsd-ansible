@@ -1,0 +1,555 @@
+# {{ ansible_managed }}
+
+##### Port Macros #####
+ftp = "'ftp, ftp-data'"
+http = "'http, https'"
+mail_relay = '{' smtp submission '}'
+mail_master = '{' smtp imap submission sieve '}'
+backup = '{' afpovertcp ssh '}'
+openvpn = "1194"
+pritunl = "2000:2010"
+apc_ps = "3052"
+logstash = "5044"
+irc = "6667"
+puppet = "8140"
+zabbix_agent = "10050"
+zabbix_trap = "10051"
+home_ssh = "20022"
+nextcloud = "20443"
+mongodb = "27017"
+pkg = "21443"
+mosh = "60000:60100"
+vnc = "5900"
+zabbix_vps_monitoring_tcp = '{' domain smtp submission http https ssh $home_ssh '}'
+zabbix_vps_monitoring_udp = '{' domain '}'
+nagios_vps_monitoring_tcp = '{' domain smtp submission http https ssh $home_ssh '}'
+nagios_vps_monitoring_udp = '{' domain '}'
+
+##### Port List Macros #####
+
+## OUT - TCP ##
+{% if not pf_out_tcp_services_common %}#{% endif -%}
+out_tcp_services_common = '{' {{ pf_out_tcp_services_common }} '}'
+{% if not pf_out_tcp_services %}#{% endif -%}
+out_tcp_services        = '{' {{ pf_out_tcp_services }} '}'
+{% if not pf_out_tcp_services_jails %}#{% endif -%}
+out_tcp_services_jails  = '{' {{ pf_out_tcp_services_jails }} '}'
+{% if not pf_out_tcp_services_vms %}#{% endif -%}
+out_tcp_services_vms    = '{' {{ pf_out_tcp_services_vms }} '}'
+
+## OUT - UDP ##
+{% if not pf_out_udp_services_common %}#{% endif -%}
+out_udp_services_common = '{' {{ pf_out_udp_services_common }} '}'
+{% if not pf_out_udp_services %}#{% endif -%}
+out_udp_services        = '{' {{ pf_out_udp_services }} '}'
+{% if not pf_out_udp_services_jails %}#{% endif -%}
+out_udp_services_jails  = '{' {{ pf_out_udp_services_jails }} '}'
+{% if not pf_out_udp_services_vms %}#{% endif -%}
+out_udp_services_vms    = '{' {{ pf_out_udp_services_vms }} '}'
+
+## IN - TCP ##
+{% if not pf_in_tcp_services_common %}#{% endif -%}
+in_tcp_services_common  = '{' {{ pf_in_tcp_services_common }} '}'
+{% if not pf_in_tcp_services %}#{% endif -%}
+in_tcp_services         = '{' {{ pf_in_tcp_services }} '}'
+{% if not pf_in_tcp_services_vms %}#{% endif -%}
+in_tcp_services_vms    = '{' {{ pf_in_tcp_services_vms }} '}'
+
+## IN - UDP ##
+{% if not pf_in_udp_services_common %}#{% endif -%}
+in_udp_services_common  = '{' {{ pf_in_udp_services_common }} '}'
+{% if not pf_in_udp_services %}#{% endif -%}
+in_udp_services         = '{' {{ pf_in_udp_services }} '}'
+{% if not pf_in_udp_services_vms %}#{% endif -%}
+in_udp_services_vms    = '{' {{ pf_in_udp_services_vms }} '}'
+
+##### ICMP Macros #####
+icmp_types = '{' echoreq unreach '}'
+icmp6_types = '{' echoreq unreach toobig routersol routeradv neighbrsol neighbradv '}'
+
+##### Interfaces #####
+host_interface = {{ pf_host_interface }}
+out_from = {{ pf_out_from }}
+{% if not pf_out_from_ip6 %}#{% endif -%}
+out_from_ip6 = {{ pf_out_from_ip6 }}
+{% if pf_enable_ipv6 -%}
+in_to    = '{' {{ pf_ipaddress }} {{ pf_ipaddress6 }} '}'
+{% else -%}
+in_to    = {{ pf_in_to }}
+{% endif -%}
+{% if not pf_nat_main_ip4 %}#{% endif -%}
+nat_main_ip4 = {{ pf_nat_main_ip4 }}
+{% if not pf_nat_main_ip6 %}#{% endif -%}
+nat_main_ip6 = {{ pf_nat_main_ip6 }}
+{% if pf_jail_lo_interface -%}
+jail_lo_interface = {{ pf_jail_lo_interface }}
+{% endif -%}
+{% if pf_openvpn_interface -%}
+openvpn_interface = {{ pf_openvpn_interface }}
+{% endif %}
+
+##### Tables #####
+{% if not pf_ips_internal %}#{% endif -%}
+table <internal>            { {{ pf_ips_internal|join(", ") }} }
+{% if not pf_ips_home %}#{% endif -%}
+table <home>                { {{ pf_ips_home|join(", ") }} }
+{% if not pf_ips_vps %}#{% endif -%}
+table <vps>                 { {{ pf_ips_vps|join(", ") }} }
+{% if not pf_ips_vps_ns %}#{% endif -%}
+table <vps_ns>              { {{ pf_ips_vps_ns|join(", ") }} }
+{% if not pf_ips_dns_resolv %}#{% endif -%}
+table <dns_resolv>          { {{ pf_ips_dns_resolv|join(", ") }} }
+
+{% if not pf_ips_dns %}#{% endif -%}
+table <dns>                 { {{ pf_ips_dns|join(", ") }} }
+{% if not pf_ips_ups %}#{% endif -%}
+table <ups>                 { {{ pf_ips_ups|join(", ") }} }
+
+{% if pf_local_subnet_prefix %}
+# {{ pf_local_subnet_prefix }}.1.96/30 = {{ pf_local_subnet_prefix }}.1.96-{{ pf_local_subnet_prefix }}.1.99
+# {{ pf_local_subnet_prefix }}.1.96/27 = {{ pf_local_subnet_prefix }}.1.96-{{ pf_local_subnet_prefix }}.1.127
+{% endif %}
+{% if not pf_ips_jails %}#{% endif -%}
+table <jails>               { {{ pf_ips_jails|join(", ") }} }
+{% if not pf_ips_bgp %}#{% endif -%}
+table <bgp>               { {{ pf_ips_bgp|join(", ") }} }
+{% if not pf_ips_mail %}#{% endif -%}
+table <mail>                { {{ pf_ips_mail|join(", ") }} }
+{% if not pf_ips_sh %}#{% endif -%}
+table <sh>                  { {{ pf_ips_sh|join(", ") }} }
+{% if not pf_ips_puppet %}#{% endif -%}
+table <puppet>              { {{ pf_ips_puppet|join(", ") }} }
+{% if not pf_ips_openvpn_server %}#{% endif -%}
+table <openvpn_server>      { {{ pf_ips_openvpn_server|join(", ") }} }
+{% if not pf_ips_nextcloud %}#{% endif -%}
+table <nextcloud>            { {{ pf_ips_nextcloud|join(", ") }} }
+{% if not pf_ips_nextcloud_ingress %}#{% endif -%}
+table <nextcloud_ingress>    { {{ pf_ips_nextcloud_ingress|join(", ") }} }
+{% if not pf_ips_pkg %}#{% endif -%}
+table <pkg>                 { {{ pf_ips_pkg|join(", ") }} }
+{% if not pf_ips_backup %}#{% endif -%}
+table <backup>              { {{ pf_ips_backup|join(", ") }} }
+{% if not pf_ips_elk %}#{% endif -%}
+table <elk>                 { {{ pf_ips_elk|join(", ") }} }
+{% if not pf_ips_web %}#{% endif -%}
+table <web>                 { {{ pf_ips_web|join(", ") }} }
+{% if not pf_ips_acme %}#{% endif -%}
+table <acme>                { {{ pf_ips_acme|join(", ") }} }
+{% if not pf_ips_printserver %}#{% endif -%}
+table <printserver>         { {{ pf_ips_printserver|join(", ") }} }
+{% if not pf_ips_pritunl_mongodb %}#{% endif -%}
+table <pritunl_mongodb>     { {{ pf_ips_pritunl_mongodb|join(", ") }} }
+{% if not pf_ips_zxfer %}#{% endif -%}
+table <zxfer>               { {{ pf_ips_zxfer|join(", ") }} }
+{% if not pf_ips_pritunl %}#{% endif -%}
+table <pritunl>             { {{ pf_ips_pritunl|join(", ") }} }
+{% if not pf_ips_pritunl_clients %}#{% endif -%}
+table <pritunl_clients>     { {{ pf_ips_pritunl_clients|join(", ") }} }
+
+{% if pf_bhyve_host -%}
+# SmartOS {{ pf_local_subnet_prefix }}.50.0/24
+table <vms>                 { {{ pf_local_subnet_prefix }}.3.0/24, {{ pf_local_subnet_prefix }}.1.144/28, {{ pf_local_subnet_prefix }}.1.160/27, {{ pf_local_subnet_prefix }}.50.0/24}
+table <vms_vnc>             { {{ pf_local_subnet_prefix }}.4.0/24 }
+# {{ pf_local_subnet_prefix }}.1.144/28 = {{ pf_local_subnet_prefix }}.1.145 - {{ pf_local_subnet_prefix }}.1.158
+# {{ pf_local_subnet_prefix }}.1.160/27 = {{ pf_local_subnet_prefix }}.1.161 - {{ pf_local_subnet_prefix }}.1.190
+# {{ pf_local_subnet_prefix }}.1.192/29 = {{ pf_local_subnet_prefix }}.1.193 - {{ pf_local_subnet_prefix }}.1.198
+{% endif -%}
+{% if pf_ips_zabbix %}#{% endif -%}
+table <zabbix>              { {{ pf_ips_zabbix|join(", ") }} }
+
+{% if pf_ips_openvpn_subnet %}#{% endif %}
+table <openvpn_subnet>      { {{ pf_ips_openvpn_subnet|join(", ") }} }
+{% if pf_enable_nextcloud_server -%}
+# AWS has IPs in 52./8 and 54./8
+table <nextcloud_updates>    { www.owncloud.org, github.com, 52.0.0.0/8, 54.0.0.0/8, www.nextcloud.org, apps.nextcloud.org }
+{% endif -%}
+{% if pf_location == 'vps' -%}
+  {%- if pf_ip_float -%}
+ip_float = '{{ pf_ip_float }}'
+  {%- endif -%}
+
+dns_ip = '192.168.1.2'
+mail_ip = '192.168.1.3'
+web_ip = '192.168.1.4'
+nagios_ip = '192.168.1.6'
+poudriere_ip = '192.168.1.10'
+
+{% if pf_enable_ipv6 -%}
+dns_ip6 = '{{ pf_ipv6_prefix }}2'
+mail_ip6 = '{{ pf_ipv6_prefix }}3'
+web_ip6 = '{{ pf_ipv6_prefix }}4'
+nagios_ip6 = '{{ pf_ipv6_prefix }}6'
+poudriere_ip6 = '{{ pf_ipv6_prefix }}10'
+  {%- if pf_ipv6_float_prefix -%}
+
+ip6_float = '{{ pf_ipv6_float_prefix }}1'
+dns_ip6_float = '{{ pf_ipv6_float_prefix }}2'
+mail_ip6_float = '{{ pf_ipv6_float_prefix }}3'
+web_ip6_float = '{{ pf_ipv6_float_prefix }}4'
+  {%- endif -%}
+{% endif -%}
+
+{% endif -%}
+
+##### Block Policy #####
+{% if pf_location == 'vps' %}
+set block-policy return
+{% else %}
+set block-policy drop
+{% endif %}
+
+{% if pf_location == 'vps' -%}
+##### JAIL NAT #####
+# Common Jail Outbound NAT
+#nat on $host_interface inet from <jails> to any -> $host_interface
+nat on $host_interface inet from <jails> to <dns_resolv> port domain -> $nat_main_ip4
+nat on $host_interface inet from <jails> to <pkg> port $pkg -> $nat_main_ip4
+nat on $host_interface inet from <jails> to <puppet> port $puppet -> $nat_main_ip4
+nat on $host_interface inet from <jails> to <elk> port $logstash -> $nat_main_ip4
+{% if pf_enable_dns_servers -%}
+# DNS Jail Outbound NAT
+nat on $host_interface inet from $dns_ip to <vps_ns> port domain -> $nat_main_ip4
+{% endif -%}
+{% if pf_enable_mail_server -%}
+# Mail Jail Outbound NAT
+nat on $host_interface inet from $mail_ip to any port $mail_relay -> $nat_main_ip4
+{% endif -%}
+{% if pf_enable_web_server -%}
+# Web Jail Outbound NAT
+nat on $host_interface inet from $web_ip to any port whois -> $nat_main_ip4
+{% endif -%}
+{% if pf_enable_nagios_server -%}
+# Nagios Jail Outbound NAT
+nat on $host_interface inet proto tcp from $nagios_ip to any port $nagios_vps_monitoring_tcp -> $nat_main_ip4
+nat on $host_interface inet proto udp from $nagios_ip to any port $nagios_vps_monitoring_udp -> $nat_main_ip4
+# TODO: Restrict to icmp to echoreq only
+nat on $host_interface inet proto icmp from $nagios_ip to any -> $nat_main_ip4
+{% endif -%}
+nat on $host_interface inet from $poudriere_ip to any port ssh -> $nat_main_ip4
+
+  {%- if pf_ip_float -%}
+rdr pass on $host_interface proto tcp from any to any port {ssh, $zabbix_agent} -> $nat_main_ip4
+  {%- endif -%}
+{% if pf_enable_dns_servers -%}
+# DNS Jail Inbound IPv4 NAT
+rdr pass on $host_interface proto tcp from any to any port domain -> $dns_ip
+rdr pass on $host_interface proto udp from any to any port domain -> $dns_ip
+{% endif -%}
+{% if pf_enable_mail_server -%}
+# Mail Jail Inbound IPv4 NAT
+rdr pass on $host_interface proto tcp from any to any port $mail_relay -> $mail_ip
+{% endif -%}
+{% if pf_enable_web_server -%}
+# Web Jail Inbound IPv4 NAT
+rdr pass on $host_interface proto tcp from any to any port { http, https } -> $web_ip
+{% endif -%}
+
+{% if pf_ipv6_float_prefix -%}
+# Host Floating Inbound IPv6 NAT
+rdr pass on $host_interface proto tcp from any to $ip6_float port {ssh, $zabbix_agent} -> $nat_main_ip6
+{% if pf_enable_dns_servers -%}
+# DNS Jail Floating Inbound IPv6 NAT
+rdr pass on $host_interface proto tcp from any to $dns_ip6_float port domain -> $dns_ip6
+rdr pass on $host_interface proto udp from any to $dns_ip6_float port domain -> $dns_ip6
+{% endif -%}
+{% if pf_enable_mail_server -%}
+# Mail Jail Floating Inbound IPv6 NAT
+rdr pass on $host_interface proto tcp from any to $mail_ip6_float port $mail_relay -> $mail_ip6
+{% endif -%}
+{% if pf_enable_web_server -%}
+# Web Jail Floating Inbound IPv6 NAT
+rdr pass on $host_interface proto tcp from any to $web_ip6_float port { http, https } -> $web_ip6
+{% endif -%}
+
+{% endif -%}
+{% endif -%}
+##### RULES #####
+block log (all) all
+
+## Loopback ##
+set skip on lo0
+
+{% if pf_location == 'vps' -%}
+# DHCP
+pass proto udp from port dhcpc to port dhcps
+pass proto udp from port dhcps to port dhcpc
+{%- endif -%}
+
+{% if pf_bhyve_host -%}
+# VM DHCP #
+pass proto udp from port dhcpc to 255.255.255.255 port dhcps
+pass proto udp from {{ pf_local_subnet_prefix }}.1.1 port dhcps to <vms> port dhcpc
+pass proto tcp from <internal> to <vms_vnc> port $vnc
+
+{% endif -%}
+# Zabbix Agent #
+pass proto tcp from {<internal>, <home>, <vps>} port {$zabbix_trap, $zabbix_agent} to <zabbix> keep state
+pass proto tcp from any port {$zabbix_trap, $zabbix_agent} to <zabbix> keep state
+pass proto tcp from {<internal>, <home>, <vps>} to <zabbix> port {$zabbix_trap, $zabbix_agent} keep state
+pass proto tcp from <zabbix> to any port $zabbix_agent keep state
+
+{% if pf_ips_dns_resolv %}
+# Allow jails to access DNS #
+pass out proto udp to <dns_resolv> port domain keep state
+pass out proto tcp to <dns_resolv> port domain keep state
+{%- endif -%}
+
+## OUT - TCP ##
+# Allow all outbound traffic from host
+pass out inet proto tcp from $out_from to any keep state
+{% if not pf_out_from_ip6 %}#{% endif -%}
+pass out inet6 proto tcp from $out_from_ip6 to any keep state
+{% if not pf_out_tcp_services_common %}#{% endif -%}
+pass out inet proto tcp from $out_from to any port $out_tcp_services_common keep state
+{% if not pf_out_tcp_services_common or not pf_out_from_ip6 %}#{% endif -%}
+pass out inet6 proto tcp from $out_from_ip6 to any port $out_tcp_services_common keep state
+{% if not pf_out_tcp_services %}#{% endif -%}
+pass out inet proto tcp from $out_from to any port $out_tcp_services keep state
+{% if not pf_out_tcp_services or not pf_out_from_ip6 %}#{% endif -%}
+pass out inet6 proto tcp from $out_from_ip6 to any port $out_tcp_services keep state
+{% if not pf_out_tcp_services_jails %}#{% endif -%}
+pass out proto tcp from <jails> to any port $out_tcp_services_jails keep state
+{% if not pf_out_tcp_services_vms %}#{% endif -%}
+pass proto tcp from <vms> to any port $out_tcp_services_vms keep state
+
+# Enable Puppet Client
+# Reenabled for zxfer on zinc
+# ?
+pass proto tcp to <puppet> port $puppet keep state
+# Enable Pkg Client from jails on zinc #
+pass proto tcp to <pkg> port $pkg keep state
+
+## OUT - UDP ##
+{% if not pf_out_udp_services_common %}#{% endif -%}
+pass out inet proto udp from $out_from to any port $out_udp_services_common keep state
+{% if not pf_out_udp_services_common or not pf_out_from_ip6 %}#{% endif -%}
+pass out inet6 proto udp from $out_from_ip6 to any port $out_udp_services_common keep state
+{% if not pf_out_udp_services %}#{% endif -%}
+pass out inet proto udp from $out_from to any port $out_udp_services keep state
+{% if not pf_out_udp_services or not pf_out_from_ip6 %}#{% endif -%}
+pass out inet6 proto udp from $out_from_ip6 to any port $out_udp_services keep state
+{% if not pf_out_udp_services_jails %}#{% endif -%}
+pass out proto udp from <jails> to any port $out_udp_services_jails keep state
+{% if not pf_out_udp_services_vms %}#{% endif -%}
+pass proto udp from <vms> to any port $out_udp_services_vms keep state
+
+## IN - TCP ##
+{% if not pf_in_tcp_services_common %}#{% endif -%}
+pass in proto tcp to $in_to port $in_tcp_services_common keep state
+{% if not pf_in_tcp_services %}#{% endif -%}
+pass in proto tcp to $in_to port $in_tcp_services keep state
+{% if not pf_in_tcp_services_vms %}#{% endif -%}
+pass proto tcp to <vms> port $in_tcp_services_vms keep state
+
+## IN - UDP ##
+{% if not pf_in_udp_services_common %}#{% endif -%}
+pass in proto udp to $in_to port $in_udp_services_common keep state
+{% if not pf_in_udp_services %}#{% endif -%}
+pass in proto udp to $in_to port $in_udp_services keep state
+{% if not pf_in_udp_services_vms %}#{% endif -%}
+pass proto udp to <vms> port $in_udp_services_vms keep state
+{% if pf_enable_ups -%}
+
+# Enable UPS #
+pass proto udp from <ups> to port $apc_ps
+{% endif -%}
+
+# Rules for Services
+{% if pf_enable_bgp -%}
+pass in proto tcp from <bgp> to any port bgp keep state
+pass in proto udp from <bgp> to any port bgp keep state
+{%- endif -%}
+{% if pf_enable_dns_servers -%}
+
+# Enable DNS Servers #
+  {%- if pf_location == 'vps' -%}
+    {%- if pf_enable_ipv6 -%}
+# Allow incoming IPv6 DNS Traffic
+pass in proto udp from any to $dns_ip6 port domain keep state
+pass in proto tcp from any to $dns_ip6 port domain keep state
+# Allow Outgoing IPv6 traffic to other DNS servers, (i.e. for Zone Transfers)
+pass out proto udp from $dns_ip6 to <vps_ns> port domain keep state
+pass out proto tcp from $dns_ip6 to <vps_ns> port domain keep state
+    {%- endif -%}
+  {%- else -%}
+pass proto tcp from <dns> to any port domain keep state
+pass proto tcp from <dns> port domain keep state
+pass proto tcp to <dns> port domain keep state
+pass proto udp from <dns> to any port domain keep state
+pass proto udp from <dns> port domain keep state
+pass proto udp to <dns> port domain keep state
+  {%- endif -%}
+{% endif -%}
+{% if pf_enable_mail_server -%}
+
+# Enable Mail Server #
+  {%- if pf_location == 'vps' -%}
+    {%- if pf_enable_ipv6 -%}
+pass in proto tcp from any to $mail_ip6 port $mail_relay keep state
+pass out proto tcp from $mail_ip6 to any port $mail_relay keep state
+    {%- endif -%}
+  {%- else -%}
+pass in proto tcp to <mail> port $mail_master keep state
+pass out proto tcp from <mail> to <vps> port submission keep state
+# SMTP for UPS
+pass in proto tcp from <ups> to port smtp keep state
+  {%- endif -%}
+{% endif -%}
+{% if pf_enable_web_server -%}
+
+# Enable Web Server #
+  {%- if pf_location == 'vps' -%}
+    {%- if pf_enable_ipv6 -%}
+pass in proto tcp from any to $web_ip6 port { http, https } keep state
+pass out proto tcp from $web_ip6 to any port whois keep state
+    {%- endif -%}
+  {%- else -%}
+pass in proto tcp from <internal> to <web> port { http, https } keep state
+# Simplisafe 64.119.134.46
+pass in proto tcp from {64.119.134.46} to <web> port { http, https } keep state
+# Blea 50.177.106.226
+#pass in proto tcp from {50.177.106.226} to <web> port { http, https } keep state
+pass out proto tcp from <web> to any port whois keep state
+  {%- endif -%}
+{% endif -%}
+{% if pf_enable_acme_client -%}
+
+# Enable Acme Client #
+  {%- if pf_location != 'vps' -%}
+pass out proto tcp from <acme> to any port { http, https } keep state
+pass out proto udp from <acme> to <vps_ns> port domain keep state
+pass out proto tcp from <acme> to <vps_ns> port domain keep state
+  {%- endif -%}
+{% endif -%}
+{% if pf_enable_nagios_server -%}
+
+  {%- if pf_location == 'vps' -%}
+# TODO: Fix access to web interface
+pass inet proto tcp to 192.168.1.6 port https keep state
+# Enable Nagios Server monitoring #
+pass proto tcp from $nagios_ip to any port $nagios_vps_monitoring_tcp keep state
+pass proto udp from $nagios_ip to any port $nagios_vps_monitoring_udp keep state
+pass proto tcp from any port $nagios_vps_monitoring_tcp to $nagios_ip keep state
+pass proto udp from any port $nagios_vps_monitoring_udp to $nagios_ip keep state
+    {%- if pf_enable_ipv6 -%}
+
+pass proto tcp from $nagios_ip6 to any port $nagios_vps_monitoring_tcp keep state
+pass proto udp from $nagios_ip6 to any port $nagios_vps_monitoring_udp keep state
+pass proto tcp from any port $nagios_vps_monitoring_tcp to $nagios_ip6 keep state
+pass proto udp from any port $nagios_vps_monitoring_udp to $nagios_ip6 keep state
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+{% if pf_enable_zabbix_server -%}
+# Enable Zabbix Server HTTP Frontend #
+pass proto tcp to <zabbix> port { http, https } keep state
+
+# Enable Zabbix Traps #
+pass in proto tcp from {<vps>, <home>} to <zabbix> port $zabbix_trap keep state
+
+# Enable Zabbix Server monitoring #
+pass proto tcp from <zabbix> to <vps> port $zabbix_vps_monitoring_tcp keep state
+pass proto udp from <zabbix> to <vps> port $zabbix_vps_monitoring_udp keep state
+pass proto tcp from <zabbix> to <ups> port ssh keep state
+
+{% endif -%}
+{% if pf_enable_puppet_server -%}
+
+# Enable Puppet Server #
+pass in proto tcp from {<internal>, <home>, <vps>} to <puppet> port $puppet keep state
+pass out proto tcp from <puppet> to any port https keep state
+{% endif -%}
+{% if pf_enable_pkg_server -%}
+
+# Enable Pkg Server #
+pass in proto tcp from {<internal>, <home>, <vps>} to <pkg> port { http, https, $pkg } keep state
+pass out proto tcp from {<internal>, <home>, <vps>} to <pkg> port { http, https, $pkg } keep state
+{% endif -%}
+{% if pf_enable_nextcloud_server -%}
+
+# Enable Owncloud Server #
+pass proto tcp from { <internal>, <home>, <nextcloud_ingress> } to <nextcloud> port { http, https, $nextcloud } keep state
+pass out proto tcp from <nextcloud> to <nextcloud_updates> port {http, https} keep state
+{% endif -%}
+{% if pf_enable_backup_server -%}
+
+# Enable Backup Server #
+pass in proto tcp to <backup> port $backup keep state
+{% endif -%}
+{% if pf_enable_openvpn_server -%}
+
+# Enable OpenVPN Server #
+pass in proto udp to <openvpn_server> port $openvpn keep state
+
+# Enable traffic from openvpn
+pass in on $openvpn_interface keep state
+pass out from <openvpn_subnet> keep state
+# TODO: Shouldn't need these?
+#pass in to <openvpn_subnet>
+{% endif -%}
+{% if pf_enable_sh_server -%}
+# Enable sh sever
+pass in proto tcp to <sh> port ssh keep state
+pass in proto udp to <sh> port $mosh keep state
+pass out proto tcp from <sh> to port $irc keep state
+{% endif -%}
+{% if pf_enable_print_server -%}
+# Enable print sever
+pass in proto tcp to <printserver> port ipp keep state
+pass out proto tcp from <printserver> to port ipp keep state
+{% endif -%}
+{% if pf_enable_zxfer_server -%}
+# Enable zxfer sever
+pass in proto tcp from <home> to <zxfer> port ssh keep state
+{% endif -%}
+{% if pf_enable_elk_server -%}
+
+# Enable ELK Server #
+pass in proto tcp from {<internal>, <home>, <vps>} to <elk> port $logstash keep state
+pass in proto tcp to <elk> port { http, https } keep state
+{% endif -%}
+{% if pf_enable_pritunl_mongodb_server -%}
+
+# Enable Pritunl MongoDB Server #
+pass proto tcp from <pritunl> to <pritunl_mongodb> port $mongodb keep state
+{% endif -%}
+{% if pf_enable_pritunl_server -%}
+
+# Enable Pritunl Server #
+pass proto tcp to <pritunl> port { http, https, 4443 } keep state
+pass proto udp to <pritunl> port $pritunl keep state
+
+# Enable all traffic in and out of pritunl clients
+pass to <pritunl_clients> keep state
+pass from <pritunl_clients> keep state
+{% endif -%}
+{% if pf_location == 'vps' -%}
+
+# Enable Jails to talk to themselves #
+# TODO: Better way to do this?
+pass proto tcp from $dns_ip to $dns_ip keep state
+pass proto udp from $dns_ip to $dns_ip keep state
+pass proto tcp from $mail_ip to $mail_ip keep state
+pass proto udp from $mail_ip to $mail_ip keep state
+pass proto tcp from $web_ip to $web_ip keep state
+pass proto udp from $web_ip to $web_ip keep state
+  {%- if pf_enable_nagios_server -%}
+pass proto tcp from $nagios_ip to $nagios_ip keep state
+pass proto udp from $nagios_ip to $nagios_ip keep state
+  {%- endif -%}
+
+# Allow jails to send mail through the mail jail
+pass proto tcp from any to $mail_ip port {smtp, submission} keep state
+{% endif -%}
+
+# ICMP
+pass inet proto icmp all icmp-type $icmp_types keep state
+pass inet6 proto icmp6 all icmp6-type $icmp6_types keep state
+pass out inet proto icmp to any keep state
+pass out inet6 proto icmp6 to any keep state
+
+# IPv6 Fragmentations
+pass inet6 proto ipv6-frag
+
+# TODO Fix this properly - poudriere
+pass proto tcp from 10.2.2.121 to any port ssh keep state

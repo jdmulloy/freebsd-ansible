@@ -31,5 +31,12 @@ pf_nat_main_ip4: $host_interface:0
 pf_jail_lo_interface: "{{ jail_host_ip4_interface }}"
 # TODO: Enable when on ipv6 capable host
 #pf_enable_ipv6: true
+pf_ips_dns_resolv:
+  - 8.8.8.8
+  - 8.8.4.4
+  - 108.61.10.10
+  - 2001:4860:4860::8888
+  - 2001:4860:4860::8844
+  - 2001:19f0:300:1704::6
 pf_ips_jails:
   - 192.168.1.0/24
