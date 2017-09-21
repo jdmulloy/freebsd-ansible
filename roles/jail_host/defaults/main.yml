@@ -1,4 +1,4 @@
 ---
+JAILS_DIR: /usr/jails
 jail_host_freebsd_base_url: http://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.1-RELEASE/base.txz
-jail_host_jails_dir: /usr/jails
 jail_host_fstype: ufs

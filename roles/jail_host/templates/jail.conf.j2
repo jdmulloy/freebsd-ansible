@@ -2,7 +2,7 @@
 
 {{ item.name }} {
         host.hostname = "{{ item.hostname }}";
-        path = "{{ jail_host_jails_dir }}/$name";
+        path = "{{ JAILS_DIR }}/$name";
         ip4.addr += "{{ item.ip4_addr }}";
 {% if "ip6_addr" in item %}
         ip6.addr += "{{ item.ip6_addr }}";

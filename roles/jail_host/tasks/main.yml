@@ -1,9 +1,9 @@
 ---
-# TODO: create {{ jail_host_jails_dir }}/base if {{ jail_host_jails_dir }}/ mounted
+# TODO: create {{ JAILS_DIR }}/base if {{ JAILS_DIR }}/ mounted
 # unarchive doesn't work with bsdtar
 #- unarchive:
 #    src: "{{ freebsd_base_url }}"
-#    dest: {{ jail_host_jails_dir }}/base
+#    dest: {{ JAILS_DIR }}/base
 #    remote_src: True
 
 - name: Enable jail NAT
@@ -32,7 +32,7 @@
   mount:
     state: mounted
     src: "{{ jail_host_dev }}"
-    path: "{{ jail_host_jails_dir }}"
+    path: "{{ JAILS_DIR }}"
     fstype: "{{ jail_host_fstype }}"
     opts: "rw,noauto"
   register: jails_mounted
@@ -40,32 +40,32 @@
 - name: Download base.txz
   get_url:
     url: "{{ jail_host_freebsd_base_url }}"
-    dest: "{{ jail_host_jails_dir }}/base.txz"
+    dest: "{{ JAILS_DIR }}/base.txz"
 
 - name: Create jail directories
   file:
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ jail_host_jails_dir }}/template/"
+    - "{{ JAILS_DIR }}/template/"
 
 # Run tar manually because ansible unarchive doesn't support bsdtar
 - name: Extract base.txz
-  command: tar xvf "{{ jail_host_jails_dir }}/base.txz"
+  command: tar xvf "{{ JAILS_DIR }}/base.txz"
   args:
-    chdir: "{{ jail_host_jails_dir }}/template"
-    creates: "{{ jail_host_jails_dir }}/template/*"
+    chdir: "{{ JAILS_DIR }}/template"
+    creates: "{{ JAILS_DIR }}/template/*"
 
 - name: Install jail template rc.conf
   copy:
     src: rc.conf
-    dest: "{{ jail_host_jails_dir }}/template/etc/"
+    dest: "{{ JAILS_DIR }}/template/etc/"
 
 - name: Create jails
   with_items: "{{ jail_host_jails }}"
-  command: cp -a "{{ jail_host_jails_dir }}/template" "{{ jail_host_jails_dir }}/{{ item.name }}"
+  command: cp -a "{{ JAILS_DIR }}/template" "{{ JAILS_DIR }}/{{ item.name }}"
   args:
-    creates: "{{ jail_host_jails_dir }}/{{ item.name }}"
+    creates: "{{ JAILS_DIR }}/{{ item.name }}"
 
 - name: Create jail.conf
   template:
