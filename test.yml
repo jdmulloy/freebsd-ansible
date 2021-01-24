@@ -5,7 +5,7 @@
   user: ansible
   roles:
     - default
-- hosts: vps-hosts
+- hosts: vps_hosts
   roles:
     - jail_host
     - pf
