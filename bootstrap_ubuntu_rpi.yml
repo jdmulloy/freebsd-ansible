@@ -1,0 +1,16 @@
+---
+- hosts: rpi
+  become: yes
+  user: ubuntu
+  roles:
+    - role: bootstrap
+    - role: singleplatform-eng-ansible-users
+      # Prevent role from trying to delete in use ubuntu user
+      users_deleted: []
+      users:
+        - username: ansible
+          name: Ansible
+# Debian/Ubuntu don't have a wheel group
+#          groups: ['wheel']
+          uid: 2000
+          ssh_key: "{{ users_ansible_ssh_keys }}"

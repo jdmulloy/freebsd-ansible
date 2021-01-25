@@ -1,0 +1,7 @@
+---
+- hosts: rpi
+  become: yes
+  user: ansible
+  roles:
+    - role: bootstrap
+    - role: singleplatform-eng-ansible-users

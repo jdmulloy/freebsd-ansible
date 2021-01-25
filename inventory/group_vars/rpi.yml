@@ -1,0 +1,16 @@
+---
+users:
+  - username: jdmulloy
+    name: Joseph Mulloy
+    password: "{{ users_jdmulloy_password_hash }}"
+# Debian/Ubuntu don't have a wheel group
+#    groups: ['wheel']
+    uid: 1000
+    ssh_key: "{{ users_jdmulloy_ssh_keys }}"
+  - username: jdmulloy2
+    name: Joseph Mulloy
+    password: "{{ users_jdmulloy_password_hash }}"
+# Debian/Ubuntu don't have a wheel group
+#    groups: ['wheel']
+    uid: 1010
+    ssh_key: "{{ users_jdmulloy_ssh_keys }}"

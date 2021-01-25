@@ -1,21 +1,58 @@
 ---
 - name: Make pkg directories
   raw: mkdir -p /usr/local/etc/pkg/repos /usr/local/etc/ssl/keys
+  when: ansible_distribution == 'FreeBSD'
 
 - name: Copy pkg repo config files
   raw: echo -n '{{ bootstrap_pkg_repo_configs[item] }}' > /usr/local/etc/pkg/repos/{{ item }}
+  when: ansible_distribution == 'FreeBSD'
   with_items:
     - FreeBSD.conf
     - pkg.jdmulloy.net.conf
 
 - name: Copy CA root certificate
   raw: echo -n '{{ bootstrap_ca_cert }}' >/usr/local/etc/ssl/cert.pem
+  when: ansible_distribution == 'FreeBSD'
 
 - name: Copy pkg repo pub key
   raw: echo -n '{{ bootstrap_pkg_pub_key }}' >/usr/local/etc/ssl/keys/pkg.jdmulloy.net.pub
+  when: ansible_distribution == 'FreeBSD'
 
 - name: Bootstrap pkg
   raw: sh -c "export ASSUME_ALWAYS_YES=YES; pkg bootstrap"
+  when: ansible_distribution == 'FreeBSD'
 
 - name: Install python
   raw: sh -c "export ASSUME_ALWAYS_YES=YES; pkg install python27"
+  when: ansible_distribution == 'FreeBSD'
+
+- name: Remove ubuntu user
+  when: ansible_user != 'ubuntu' and ansible_distribution == 'Ubuntu'
+  register: remove_ubuntu_user
+  until: remove_ubuntu_user is succeeded
+  ignore_errors: yes
+  retries: 20
+  delay: 10
+  user:
+    name: ubuntu
+    state: absent
+
+- name: Check that ubuntu user was deleted
+  fail:
+    msg: 'Unable to delete ubuntu user'
+  when: ansible_user != 'ubuntu' and ansible_distribution == 'Ubuntu' and remove_ubuntu_user is not succeeded
+
+- name: Remove ubuntu group
+  when: ansible_user != 'ubuntu' and ansible_distribution == 'Ubuntu'
+  group:
+    name: ubuntu
+    state: absent
+
+- name: Grant full sudo access to ansible user
+  copy:
+    content: "ansible ALL=(ALL) NOPASSWD:ALL"
+    dest: /etc/sudoers.d/ansible
+    owner: root
+    group: root
+    mode: 0440
+    validate: 'visudo -cf %s'

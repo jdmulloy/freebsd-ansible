@@ -1,3 +1,13 @@
 ---
-ansible_python_interpreter: /usr/local/bin/python2.7
+#ansible_python_interpreter: /usr/local/bin/python2.7
 ansible_managed: File managed by Ansible
+users_deleted:
+  - username: freebsd
+  - username: ubuntu
+users:
+  - username: ansible
+    name: Ansible
+# Debian/Ubuntu don't have a wheel group
+#    groups: ['wheel']
+    uid: 2000
+    ssh_key: "{{ users_ansible_ssh_keys }}"
