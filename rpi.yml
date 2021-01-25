@@ -5,3 +5,6 @@
   roles:
     - role: bootstrap
     - role: singleplatform-eng.users
+    - role: cloudalchemy.node-exporter
+    - role: cloudalchemy.prometheus
+    - role: cloudalchemy.grafana
