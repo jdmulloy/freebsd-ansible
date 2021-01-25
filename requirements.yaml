@@ -1,0 +1,7 @@
+# Ansible Galaxy Requirements File
+- src: singleplatform-eng.users
+  version: v1.2.6
+- src: cloudalchemy.prometheus
+  version: 2.16.3
+- src: cloudalchemy.node-exporter
+  version: 0.22.0

@@ -4,4 +4,4 @@
   user: ansible
   roles:
     - role: bootstrap
-    - role: singleplatform-eng-ansible-users
+    - role: singleplatform-eng.users

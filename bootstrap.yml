@@ -4,4 +4,4 @@
   roles:
     - bootstrap
     - doas
-    - singleplatform-eng-ansible-users
+    - singleplatform-eng.users
