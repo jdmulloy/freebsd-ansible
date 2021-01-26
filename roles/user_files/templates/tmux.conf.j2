@@ -1,0 +1,171 @@
+
+# Author nemysis
+
+# Sound on start and restart.
+# For BSD
+#new-window 'mplayer /usr/local/share/sounds/local/Startup2.wav > /dev/null 2>&1'
+# For GNU/Linux
+#new-window 'mplayer /usr/local/share/sounds/local/Startup2.wav > /dev/null 2>&1'
+
+# Change default Keys Ctrl+b to Ctrl+a as Screen, handy
+{% if item.get('tmux_hotkey') == "b" %}#{% endif %}
+#set -g prefix C-a
+{% if item.get('tmux_hotkey') == "b" %}#{% endif %}
+set-option -g prefix C-{{ item.get('tmux_hotkey', 'a') }}
+{% if item.get('tmux_hotkey') == "b" %}#{% endif %}
+bind-key a send-prefix
+{% if item.get('tmux_hotkey') == "b" %}#{% endif %}
+#unbind-key C-b
+
+# `+r Reloads the Configuration, handy
+# For BSD
+bind r source-file /usr/local/etc/tmux.conf
+# For GNU/Linux
+#bind r source-file /etc/tmux.conf
+
+# Reactivate a window in which the command has exited
+#bind-key R respawn-window
+
+# set global r-o-e so that initial window of initial session gets it
+# http://superuser.com/questions/200382/how-do-i-get-tmux-to-open-up-a-set-of-panes-without-manually-entering-them
+#set -g set-remain-on-exit on
+
+# Instructs tmux to expect UTF-8 sequences to appear in this window.
+#set-window-option -g utf8 on
+
+# Mouse state in modes.
+#setw -g mode-mouse off
+
+# If enabled, request mouse input as UTF-8 on UTF-8 terminals.
+#set -g mouse-utf8 on
+
+# Set the default terminal for new windows created in this session
+# the default value of the TERM environment variable.
+# For tmux to work correctly, this must be set to `screen' or a derivative of it.
+#set-option -g default-terminal "screen"
+#set-option -g default-terminal "screen-256color"
+
+# Buffer scroll
+# https://bbs.archlinux.org/viewtopic.php?id=102217
+# For XTerm
+set -g terminal-overrides 'xterm*:smcup@:rmcup@'
+#set -g terminal-overrides '*:smcup@:rmcup@'
+# For rxvt-unicode
+#set -ag terminal-overrides  '*:smcup@:rmcup@,rxvt*:XT'
+#set -g terminal-overrides 'smcup@:rmcup@:tsl=\E]0;:fsl=\007'
+
+# Starts Window numbering from 1
+set -g base-index 1
+
+# paste-buffer
+#bind-key -n F2 paste-buffer
+
+# Scrollback Buffer n Lines
+set -g history-limit 10000
+
+# Allows the smcup and rmcup terminfo(5) capabilities
+set-window-option -g alternate-screen on
+#set-window-option -g alternate-screen off
+
+# XTerm keys
+#setw -g xterm-keys on
+
+# Monitor Activity and Notifying if other windows has activities
+setw -g monitor-activity off
+set -g visual-activity on
+#set -g visual-bell on
+
+# Set action on window bell
+set -g bell-action any
+#set -g bell-action current
+
+# Pipe any output sent by the program in target-pane to a shell command
+bind-key C-p pipe-pane -o 'cat >>~/output.#I-#P'
+
+# Fonts utf8 Support
+#set-option -g status-utf8 on
+
+# Open a man Page
+bind-key / command-prompt "split-window 'exec man %%'"
+# http://gist.github.com/jeffwar/dotfiles/blob/master/.tmux.conf
+bind-key M command-prompt -p "man Page for:"    "new-window 'man %% || read'"
+
+# Start root in a new Window, with full Enviroment
+bind-key R new-window 'su'
+
+# Kill Window k
+unbind k
+bind k confirm-before "kill-window"
+
+# Rename Window A
+unbind A
+bind A command-prompt "rename-window %%"
+
+# Quick view of Processes
+bind-key '~' new-window 'exec htop'
+
+# Mouse selects panes
+#set-option -g mouse-select-pane on
+
+# Splitting windows into panes with h and v
+bind-key v split-window -v
+bind-key h split-window -h
+
+# Change window like Screen, l is default
+bind-key C-a last-window
+
+# F11 and F12 cycles throught Windows
+bind-key -n F11 prev
+bind-key -n F12 next
+
+# Ctrl+PageUP and Ctrl+PageDown throught Windows
+#bind-key -n C-NPage next-window
+#bind-key -n C-PPage previous-window
+
+# Ctrl+left/right cycles throught Windows
+#bind-key -n C-right next
+#bind-key -n C-left prev
+
+# Bind Keypad Enter and send Enter
+#bind -n KPEnter send Enter
+
+# SSH
+bind-key S command-prompt "new-window -n %1 'ssh %1'"
+
+# --------------------------------------------------------------------------------------------------
+
+# Titles and Statusbar
+
+# Titles
+set-option -g set-titles on
+#set-option -g set-titles-string '#S.#I.#P #W #T #H' #  window number, program name,active (or not), host
+set-option -g set-titles-string '#S.#I.#P #W #T' #  window number, program name,active (or not), host
+set-window-option -g automatic-rename on
+
+# Toggle Statusbar
+bind-key b set-option status
+
+# on-screen time for display-panes in ms
+set -g display-panes-time 2000
+set -g display-time 2000
+
+set -g status-justify left
+
+# http://www.mindfuzz.net/?p=178
+# THEME
+set -g status-style fg=white,bg=blue,bright
+set -g window-status-current-style bg=red
+set -g status-interval 1
+
+# Status left
+set -g status-left-length 50
+set -g status-left '#h:#S|'
+#set -g status-left ' #[fg=green,bold]#H#[default]'
+
+# Status right
+# For BSD
+set -g status-right '|%m/%d %H:%M:%S'
+# For GNU/Linux
+#set -g status-right '#[fg=yellow,bold]#(cut -d " " -f 1-3 /proc/loadavg)#[default] #[fg=blue,bold]%A %d.%m.%Y#[default] #[fg=white]%H:%M#[default]'
+#set -g status-right '#[fg=yellow]#(cut -d " " -f 1-3 /proc/loadavg)#[default] #[fg=blue]%A %d.%m.%Y#[default] #[fg=white]%H:%M#[default]'
+#set -g status-right '#[fg=yellow,bold]#(cut -d " " -f 1-4 /proc/loadavg)#[default] #[fg=cyan,bold]%Y-%m-%d %H:%M:%S#[default] '

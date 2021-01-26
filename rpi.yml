@@ -8,3 +8,4 @@
     - role: cloudalchemy.node-exporter
     - role: cloudalchemy.prometheus
     - role: cloudalchemy.grafana
+    - role: user_files

@@ -14,3 +14,4 @@ users:
 #    groups: ['wheel']
     uid: 1010
     ssh_key: "{{ users_jdmulloy_ssh_keys }}"
+    tmux_hotkey: a

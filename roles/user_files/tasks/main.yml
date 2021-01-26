@@ -1,0 +1,20 @@
+---
+- name: Users vim rc
+  loop: "{{ users }}"
+  when: "'disable_files' not in item"
+  template:
+    dest: "/home/{{ item.username }}/.vimrc"
+    src: vimrc.j2
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: "0644"
+
+- name: Users tmux.conf
+  loop: "{{ users }}"
+  when: "'disable_files' not in item"
+  template:
+    dest: "/home/{{ item.username }}/.tmux.conf"
+    src: tmux.conf.j2
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: "0644"
