@@ -1,6 +1,9 @@
 #!/bin/sh
 set -x
 
+# Fix Python crashing on macOS High Sierra when calling fork()
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
 HOST="upi"
 KEY=~/.ssh/id_ed25519.pub 
 DEFAULT_USER="ubuntu"
