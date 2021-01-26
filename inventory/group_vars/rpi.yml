@@ -5,6 +5,7 @@ users:
     password: "{{ users_jdmulloy_password_hash }}"
 # Debian/Ubuntu don't have a wheel group
 #    groups: ['wheel']
+    groups: ['sudo']
     uid: 1000
     ssh_key: "{{ users_jdmulloy_ssh_keys }}"
   - username: jdmulloy2
@@ -12,6 +13,7 @@ users:
     password: "{{ users_jdmulloy_password_hash }}"
 # Debian/Ubuntu don't have a wheel group
 #    groups: ['wheel']
+    groups: ['sudo']
     uid: 1010
     ssh_key: "{{ users_jdmulloy_ssh_keys }}"
     tmux_hotkey: a
