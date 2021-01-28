@@ -11,3 +11,10 @@ users:
 #    groups: ['wheel']
     uid: 2000
     ssh_key: "{{ users_ansible_ssh_keys }}"
+
+grafana_datasources:
+  - name: prometheus
+    type: prometheus
+    access: proxy
+    url: 'http://{{ prometheus_web_listen_address }}'
+    basicAuth: false
